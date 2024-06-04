@@ -1,7 +1,6 @@
 import random
 from fpdf import FPDF
 
-
 def generate_exam(questions, answers):
     pdf = FPDF(orientation='P', unit='mm', format='A4')
     pdf.add_page()
@@ -12,14 +11,16 @@ def generate_exam(questions, answers):
         if not isinstance(question['options'], dict):
             raise TypeError(
                 f"Expected a dictionary for options, but got {type(question['options'])} for question {i + 1}")
-        pdf.multi_cell(25, 10, f"Q{i + 1}: {question['question']}", 1, 'L', 1)
+        if i > 0:
+            pdf.ln(10)  # Add space before each new question
+        pdf.multi_cell(200, 10, f"Q{i + 1}: {question['question']}", new_x="LMARGIN", new_y="NEXT")
         for key, option in question['options'].items():
-            pdf.multi_cell(25, 10, f"    {key}: {option}")
+            pdf.multi_cell(200, 10, f"        {key}: {option}", new_x="LMARGIN", new_y="NEXT")  # Double indention for options
 
     pdf.add_page()
-    pdf.multi_cell(200, 10, f"Q{i + 1}: {question['question']}", 1, 'L', 0)
+    pdf.multi_cell(200, 10, "Answers", new_x="LMARGIN", new_y="NEXT")
     for i, answer in enumerate(answers):
-        pdf.multi_cell(25, 10, f"Q{i + 1}: {answer}", 0, 'L')
+        pdf.multi_cell(200, 10, f"Q{i + 1}: {answer}", new_x="LMARGIN", new_y="NEXT")
 
     return pdf
 
